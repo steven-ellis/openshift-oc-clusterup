@@ -15,12 +15,22 @@
              --enable=rhel-7-server-extras-rpms \
     when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
 
+  - name: Enable the Centos 7 OpenShift Origin Repo
+    yum_repository:
+      name: centos-openshift-origin
+      description: CentOS OpenShift Origin
+      file: centos_paas_repos
+      baseurl: 'http://mirror.centos.org/centos/7/paas/x86_64/openshift-origin/'
+      gpgcheck: no
+      enabled: 1
+      gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-PaaS'
 
   - name: Additional packages needed as our Server
     yum: name={{item}} state=present
     with_items :
      - git
      - docker
+     - origin-clients-3.7.0
 
   - name: Git clone the oc-cluster-wrapper
     git:
