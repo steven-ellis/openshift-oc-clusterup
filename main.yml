@@ -1,16 +1,15 @@
+---
 # Install pre-requistes do we can run "oc cluster up"
 #
 # Based on
 #  https://github.com/openshift-evangelists/oc-cluster-wrapper
 #   https://developers.redhat.com/blog/2017/02/23/openshift-for-developers-set-up-a-full-cluster-in-under-30-minutes/ 
 #
----
 - hosts: all
   vars:
   remote_user: root
   tasks:
 
-  - 
   - name: Enable the extras repositories when on RHEL 7 to get Docker
     command: subscription-manager repos \
              --enable=rhel-7-server-extras-rpms \
@@ -18,11 +17,12 @@
 
 
   - name: Additional packages needed as our Server
-    yum: name={{item}} state=latest
+    yum: name={{item}} state=present
     with_items :
      - git
      - docker
 
-  - git:
-    repo: 'https://github.com/openshift-evangelists/oc-cluster-wrapper'
-    dest: /root/
+  - name: Git clone the oc-cluster-wrapper
+    git:
+      repo: 'https://github.com/openshift-evangelists/oc-cluster-wrapper'
+      dest: /root/oc-cluster-wrapper
