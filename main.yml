@@ -37,6 +37,25 @@
       repo: 'https://github.com/openshift-evangelists/oc-cluster-wrapper'
       dest: /root/oc-cluster-wrapper
 
+  - name: Enable firewall docker zone
+    firewalld:
+      source: 172.17.0.0/16
+      zone: dockerc
+      state: enabled
+
+
+  - name: Enable firewall access for docker services
+    firewalld: port={{item}} immediate=true permanent=true state=enabled zone=dockerc
+    with_items :
+     - 8443/tcp
+     - 53/udp
+     - 8053/udp
+
+  - name: Enable external service access on 8443
+    firewalld: port={{item}} immediate=true permanent=true state=enabled 
+    with_items :
+     - 8443/tcp
+
   - name: Make sure we have enabled the insecure docker registry
     lineinfile: dest=/etc/sysconfig/docker
                 state=present
