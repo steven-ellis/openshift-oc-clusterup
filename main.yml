@@ -36,3 +36,24 @@
     git:
       repo: 'https://github.com/openshift-evangelists/oc-cluster-wrapper'
       dest: /root/oc-cluster-wrapper
+
+  - name: Make sure we have enabled the insecure docker registry
+    lineinfile: dest=/etc/sysconfig/docker
+                state=present
+                line="INSECURE_REGISTRY='--insecure-registry 172.30.0.0/16;'"
+    notify: update docker
+
+  - name: docker to be running
+    systemd:
+      name: docker
+      state: started
+      enabled: yes
+      masked: no
+
+
+  handlers:
+    - name: update docker
+      systemd:
+        name=docker
+        state=reloaded
+        masked=no
