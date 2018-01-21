@@ -51,6 +51,7 @@
       zone: dockerc
       permanent: true
       state: enabled
+    notify: restart firewalld
 
 
   - name: Enable firewall access for docker services
@@ -59,11 +60,14 @@
      - 8443/tcp
      - 53/udp
      - 8053/udp
+    notify: restart firewalld
 
-  - name: Enable external service access on 8443
+  - name: Enable external service access on 8443 plus port 80 for live services
     firewalld: port={{item}} immediate=true permanent=true state=enabled 
     with_items :
      - 8443/tcp
+     - 80/tcp
+    notify: restart firewalld
 
   - name: Make sure we have enabled the insecure docker registry
     lineinfile: dest=/etc/sysconfig/docker
@@ -84,4 +88,10 @@
       systemd:
         name=docker
         state=reloaded
+        masked=no
+
+    - name: restart firewalld
+      systemd:
+        name=firewalld
+        state=restarted
         masked=no
