@@ -10,10 +10,10 @@
   remote_user: root
   tasks:
 
-  - name: Enable the extras repositories when on RHEL 7 to get Docker
-    command: subscription-manager repos \
-             --enable=rhel-7-server-extras-rpms \
-    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
+  #- name: Enable the extras repositories when on RHEL 7 to get Docker
+    #command: subscription-manager repos \
+             #--enable=rhel-7-server-extras-rpms \
+    #when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
 
   - name: Enable the Centos 7 OpenShift Origin Repo
     yum_repository:
@@ -26,7 +26,7 @@
       gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-PaaS'
 
   - name: Additional packages needed as our Server
-    yum: name={{item}} state=present
+    yum: name={{item}} state=present enablerepo=rhel-7-server-extras-rpms
     with_items :
      - git
      - docker
@@ -37,10 +37,19 @@
       repo: 'https://github.com/openshift-evangelists/oc-cluster-wrapper'
       dest: /root/oc-cluster-wrapper
 
+#  - name: Create dockerc firewall zone
+#    firewalld:
+#      zone: dockerc
+#      state: enabled
+#      permanent: true
+  #- name: Create dockerc firewall zone
+    #command: firewall-cmd --permanent --new-zone dockerc
+
   - name: Enable firewall docker zone
     firewalld:
       source: 172.17.0.0/16
       zone: dockerc
+      permanent: true
       state: enabled
 
 
@@ -59,7 +68,7 @@
   - name: Make sure we have enabled the insecure docker registry
     lineinfile: dest=/etc/sysconfig/docker
                 state=present
-                line="INSECURE_REGISTRY='--insecure-registry 172.30.0.0/16;'"
+                line="INSECURE_REGISTRY='--insecure-registry 172.30.0.0/16'"
     notify: update docker
 
   - name: docker to be running
