@@ -16,8 +16,30 @@ A vanilla base RHEL 7 or Centos 7 environment with
 ## Steps
 Due to some issues with firewalld you need to create the dockerc zone before running the playbook
 
-firewall-cmd --permanent --new-zone dockerc
-firewall-cmd --reload
+    firewall-cmd --permanent --new-zone dockerc
+    firewall-cmd --reload
+
+Then execute the ansible playbook with an appropriate host file
+
+    ansible-playbook -i host main.yml
+
+
+Once completed you have all the required dependancies for
+* Docker
+* Git
+* oc-cluster
+
+You can enable the environment under your user by typing
+
+    cd 
+    echo 'PATH=$HOME/oc-cluster-wrapper:$PATH' >> $HOME/.bash_profile
+    echo 'export PATH' >> $HOME/.bash_profile
+    . ./.bash_profile 
+
+You can then use "oc-cluster" to run multiple OpenShift environments, including different releases
+On my machine the public IP of my host is 192.168.122.157 so I'd run the following
+
+    oc-cluster up example --public-hostname=192.168.122.157
 
 
 ## References
