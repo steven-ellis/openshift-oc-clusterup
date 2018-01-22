@@ -6,9 +6,13 @@
 #   https://developers.redhat.com/blog/2017/02/23/openshift-for-developers-set-up-a-full-cluster-in-under-30-minutes/ 
 #
 - hosts: all
-  vars:
   remote_user: root
+  vars:
+    yum_extra_repo:
+      RedHat: rhel-7-server-extras-rpms
+      CentOS: centos-openshift-origin
   tasks:
+
 
   #- name: Enable the extras repositories when on RHEL 7 to get Docker
     #command: subscription-manager repos \
@@ -26,7 +30,10 @@
       gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-PaaS'
 
   - name: Additional packages needed as our Server
-    yum: name={{item}} state=present enablerepo=rhel-7-server-extras-rpms
+    yum: 
+      name={{item}}
+      state=present
+      enablerepo={{yum_extra_repo[ansible_distribution]}}
     with_items :
      - git
      - docker
