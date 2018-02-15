@@ -67,6 +67,7 @@
      - 8443/tcp
      - 53/udp
      - 8053/udp
+     - 5000/tcp
     notify: restart firewalld
 
   - name: Enable external service access on 8443 plus port 80 for live services
