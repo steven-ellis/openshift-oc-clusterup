@@ -28,16 +28,28 @@
       gpgcheck: no
       enabled: 1
       gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-PaaS'
+    when: (ansible_distribution == "Centos" and ansible_distribution_major_version == "7")
 
-  - name: Additional packages needed as our Server
+  - name: Additional packages needed as our Server for Centos
     yum: 
       name={{item}}
       state=present
-      enablerepo={{yum_extra_repo[ansible_distribution]}}
     with_items :
      - git
      - docker
      - origin-clients-3.7.0
+    when: (ansible_distribution == "Centos" and ansible_distribution_major_version == "7")
+
+  - name: Additional packages needed as our Server for RHEL
+    yum: 
+      name={{item}}
+      state=present
+      enablerepo=rhel-7-server-extras-rpms,rhel-7-server-ose-3.7-rpms,rhel-7-fast-datapath-rpms,rhel-7-server-rpms
+    with_items :
+     - git
+     - docker
+     - atomic-openshift-clients
+    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
 
   - name: Git clone the oc-cluster-wrapper
     git:
