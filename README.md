@@ -37,7 +37,9 @@ You can enable the environment under your user by typing
     . ./.bash_profile 
 
 You can then use "oc-cluster" to run multiple OpenShift environments, including different releases
-On my machine the public IP of my host is 192.168.122.157 so I'd run the following
+For example assuming the following values
+* public IP of the host is "192.168.122.157" 
+* profile is "example"
 
     oc-cluster up example --public-hostname=192.168.122.157
 
