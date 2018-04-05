@@ -3,7 +3,7 @@
 #
 # Based on
 #  https://github.com/openshift-evangelists/oc-cluster-wrapper
-#   https://developers.redhat.com/blog/2017/02/23/openshift-for-developers-set-up-a-full-cluster-in-under-30-minutes/ 
+#   https://developers.redhat.com/blog/2017/02/23/openshift-for-developers-set-up-a-full-cluster-in-under-30-minutes/
 #
 - hosts: all
   remote_user: root
@@ -13,6 +13,15 @@
       CentOS: centos-openshift-origin
   tasks:
 
+  tasks:
+  - name: Get active firewall zones on host
+    shell: firewall-cmd --get-zones | grep dockerc
+    register: activeZones
+    failed_when: no
+
+  - name: Stop playbook if firewall execution not completed
+    fail: msg="Firewall commands must be run before executing this playbook activeZones"
+    when: activeZones.rc != 0
 
   #- name: Enable the extras repositories when on RHEL 7 to get Docker
     #command: subscription-manager repos \
@@ -36,6 +45,11 @@
       state=present
     with_items :
      - git
+     - wget
+     - net-tools
+     - bind-utils
+     - iptables-services
+     - bridge-utils
      - docker
      - origin-clients-3.7.0
     when: (ansible_distribution == "Centos" and ansible_distribution_major_version == "7")
@@ -47,6 +61,11 @@
       enablerepo=rhel-7-server-extras-rpms,rhel-7-server-ose-3.7-rpms,rhel-7-fast-datapath-rpms,rhel-7-server-rpms
     with_items :
      - git
+     - wget
+     - net-tools
+     - bind-utils
+     - iptables-services
+     - bridge-utils
      - docker
      - atomic-openshift-clients
     when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
