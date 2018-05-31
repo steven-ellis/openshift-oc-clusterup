@@ -11,6 +11,7 @@
     yum_extra_repo:
       RedHat: rhel-7-server-extras-rpms
       CentOS: centos-openshift-origin
+    openshift_version: 3.9
   tasks:
 
   tasks:
@@ -51,14 +52,14 @@
      - iptables-services
      - bridge-utils
      - docker
-     - origin-clients-3.7.0
+     - origin-clients-{{openshift_version}}.0
     when: (ansible_distribution == "Centos" and ansible_distribution_major_version == "7")
 
   - name: Additional packages needed as our Server for RHEL
     yum: 
       name={{item}}
       state=present
-      enablerepo=rhel-7-server-extras-rpms,rhel-7-server-ose-3.7-rpms,rhel-7-fast-datapath-rpms,rhel-7-server-rpms
+      enablerepo=rhel-7-server-extras-rpms,rhel-7-server-ose-{{openshift_version}}-rpms,rhel-7-fast-datapath-rpms,rhel-7-server-rpms
     with_items :
      - git
      - wget
