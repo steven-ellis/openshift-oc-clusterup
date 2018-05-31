@@ -43,6 +43,9 @@ For example assuming the following values
 
     oc-cluster up example --public-hostname=192.168.122.157
 
+If you want to consume OpenShift Container Platform
+
+    oc-cluster up example --type=ocp --image=ocp --public-hostname=192.168.122.157
 
 ## References
 * https://github.com/openshift-evangelists/oc-cluster-wrapper
